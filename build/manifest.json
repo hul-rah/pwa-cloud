@@ -1,0 +1,17 @@
+{
+    "name": "PWA demo",
+    "short_name": "PWA demo",
+    "lang": "en-US",
+    "start_url": "index.html",
+    "display": "standalone",
+    "theme_color": "#90a8b2",
+    "icons": [{
+        "src": "images/fav.jpg"
+    },{
+        "src": "images/save_square.png" ,
+        "sizes": "144x144",
+        "type": "image/png"
+    }],
+    "display": "standalone",
+    "background_color": "#3E4EB8"
+}
