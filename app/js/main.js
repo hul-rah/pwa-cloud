@@ -80,7 +80,7 @@ function addAndPostEvent(e) {
     loadingSpinner(true);
     e.preventDefault();
     console.log('Call 2 api/add');
-    debugger;
+    //debugger;
     const data = {
         id: Date.now(),
         firstName: document.getElementById('firstName').value,
@@ -198,7 +198,7 @@ function hideNotificationMessages(elementObj,time)
 function saveUserDataLocally(users) {
     if (!('indexedDB' in window)) { return null; }
     return dbPromise.then(db => {
-        debugger;
+        //debugger;
         const tx = db.transaction('users', 'readwrite');
         const store = tx.objectStore('users');
         return Promise.all(users.map(user => store.put(user)))
@@ -236,7 +236,7 @@ function deleteUser(id) {
 
 function deleteUserFromDb(id) {
     return dbPromise.then(db => {
-        debugger;
+        //debugger;
         var transaction = db.transaction('users', 'readwrite');
         var objectStore = transaction.objectStore('users');
         var objectStoreRequest = objectStore.delete(id);
@@ -261,7 +261,7 @@ function loadingSpinner(load) {
 function getMaxPk() {
 
     return dbPromise.then(db => {
-        debugger;
+        //debugger;
         var transaction = db.transaction('users', 'readonly');
         var objectStore = transaction.objectStore('users');
         var index = objectStore.index('firstName');

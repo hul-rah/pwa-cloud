@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "email": "jd@g.com",
+    "contact": 2012034450
+  },
+  {
+    "id": 2,
+    "firstName": "Jason",
+    "lastName": "Doe",
+    "email": "rs@g.com",
+    "contact": 5401102315
+  },
+  {
+    "id": 3,
+    "firstName": "Joe",
+    "lastName": "c",
+    "email": "ac@g.com",
+    "contact": 8978967894
+  }
+]
