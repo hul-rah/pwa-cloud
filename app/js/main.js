@@ -1,12 +1,12 @@
-if ('serviceWorker' in navigator) { 
-    window.addEventListener('load', () => {  
+if ('serviceWorker' in navigator) { 
+    window.addEventListener('load', () => {  
         navigator.serviceWorker.register('/sw.js')
             .then(registration => {
                 console.log(`Service Worker registed! Scope: ${registration.scope}`);
             })
             .catch(err => {
                 console.log(`Service Worker registration failed: ${err}`);
-            }); 
+            }); 
     });
 }
 var isLoading = true,
@@ -18,6 +18,8 @@ const offlineMessage = document.getElementById('offline');
 const noDataMessage = document.getElementById('no-data');
 const dataSavedMessage = document.getElementById('data-saved');
 const saveErrorMessage = document.getElementById('save-error');
+const deleteSuccessMessage = document.getElementById('delete-success');
+const deleteErrorMessage= document.getElementById('delete-error');
 const addEventButton = document.getElementById('add-event-button');
 
 addEventButton.addEventListener('click', addAndPostEvent);
@@ -145,7 +147,7 @@ function updateUI(users) {
            <td>${user.lastName}</td>
            <td>${user.email}</td>
            <td>${user.contact}</td>
-           <td><i class="fa fa-trash-o" id="deleteUser" onclick="deleteUser(${user.id})" style="font-size:20px"></i></td></tr>`;
+           <td><i class="fa fa-trash-o" id="deleteUser" onclick="deleteUser(${user.id},this)" style="font-size:20px"></i></td></tr>`;
         usrdata.insertAdjacentHTML('beforeend', item);
     });
 }
@@ -173,12 +175,26 @@ function messageDataSaved() {
     dataSavedMessage.style.display = 'block';
     hideNotificationMessages(dataSavedMessage,3000);
 }
+function messageDeleteSuccess(){
+    //alert user that data has been deleted 
+    const lastUpdated = getLastUpdated();
+    if (lastUpdated) { deleteSuccessMessage.textContent += ' on ' + lastUpdated; }
+    deleteSuccessMessage.style.display = 'block';
+    hideNotificationMessages(deleteSuccessMessage,3000);
+}
 
 function messageSaveError() {
     // alert user that data couldn't be saved offline
     saveErrorMessage.style.display = 'block';
     hideNotificationMessages(saveErrorMessage);
 }
+
+function messageDeleteError(){
+    //alert user that data couldn't be deleted 
+    deleteErrorMessage.style.display = 'block';
+    hideNotificationMessages(deleteErrorMessage);
+}
+
 
 /* Storage functions */
 
@@ -231,34 +247,39 @@ function getLocalUserData() {
     });
 }
 
-function deleteUser(id) {
-    deleteUserFromDb(id);
+function deleteUser(id, a) {
+    if (!('indexedDB' in window)) { return null; }
     const data = { id: id };
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(data);
-    // return fetch('api/delete', {
-    //     method: 'POST',
-    //     headers: headers,
-    //     body: body
-    // });
-    // .then(function() {
-    //     $('#user_' + id).remove();
-    // }).catch(error => console.log("Error in deleting the user"));
+    var i = a.parentNode.parentNode.rowIndex;
+    document.getElementById('usrdata').deleteRow(i);
+    deleteUserFromDb(id);
+    return fetch('api/delete', {
+        method: 'POST',
+        headers: headers,
+        body: body
+    }).then(function() {
+        messageDeleteSuccess();
+    }).catch(function(){
+        messageDeleteError();
+    });
 }
 
 function deleteUserFromDb(id) {
+    if (!('indexedDB' in window)) { return null; }
     return dbPromise.then(db => {
-        //debugger;
+        debugger;
         var transaction = db.transaction('users', 'readwrite');
         var objectStore = transaction.objectStore('users');
         var objectStoreRequest = objectStore.delete(id);
-        objectStoreRequest.onsuccess = function() {
-            console.log("id deleted" + id);
-            $('#user_' + id).remove();
-        }
         transaction.oncomplete = function(event) {
             db.close();
         };
+    }).then(function() {
+        console.log("deleted successfully");
+    }).catch(function(error){
+        console.error('Error:', error);
     });
 }
 
